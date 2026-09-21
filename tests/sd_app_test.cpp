@@ -1,7 +1,3 @@
 #include <gtest/gtest.h>
 
-TEST(SDAppTestSuite, EmptyTest) {
-
-}
-
-
+TEST(SDAppTestSuite, EmptyTest) {}

@@ -1,0 +1,6 @@
+BasedOnStyle: LLVM
+IndentWidth: 4
+ColumnLimit: 120 # Allows up to 120 characters before wrapping
+
+# Keeps the standard block indentation style
+AlignAfterOpenBracket: BlockIndent
