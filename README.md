@@ -1,14 +1,24 @@
 # SD App
 
-App using [stable-diffusion.cpp](https://github.com/leejet/stable-diffusion.cpp) for local Stable Diffusion inference and running generative image/video models locally.
+Basic GUI to simplify running [stable-diffusion.cpp](https://github.com/leejet/stable-diffusion.cpp) with Qwen Image.
 
-Currently supports:
+![](./docs/qwen_image_app.png)
 
-- Qwen Image
+Uses
+- [stable-diffusion.cpp](https://github.com/leejet/stable-diffusion.cpp)
+- [ImGUI](https://github.com/ocornut/imgui)
+- [Qwen Image](https://huggingface.co/Qwen/Qwen-Image-2512)
+
+## Disclaimer
+
+This is a dev WIP that currently only supports [Qwen Image](./scripts/get_qwen_img.sh) for generation, no editing support.
+
+>! NOTE
+> Parts co-authored with AI.
 
 # Manual Setup
 
-Tested on Windows compiling
+Tested on Windows only
 
 - MSVC 194 using C++20
 - vscode
