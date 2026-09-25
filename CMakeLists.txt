@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.24)
-project(sd_app LANGUAGES CXX)
+
+if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
+    set(CMAKE_CUDA_ARCHITECTURES 61 86)
+endif()
+
+project(sd-app LANGUAGES C CXX)
 
 if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan_provider.cmake")
     file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/c22bbf0af0b73d5f0def24a9cdf4ce503ae79e5d/conan_provider.cmake"
@@ -10,10 +15,16 @@ endif()
 list(APPEND CMAKE_PROJECT_TOP_LEVEL_INCLUDES ${CMAKE_BINARY_DIR}/conan_provider.cmake)
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(SOURCE_DIR src)
 set(INCLUDE_DIR include)
 set(APP_DIR app)
 set(TEST_DIR tests)
+set(SD_CUDA ON CACHE INTERNAL "Enable CUDA for stable-diffusion.cpp")
+set(SDCPP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party/stable-diffusion.cpp"
+    CACHE PATH "Path to stable-diffusion.cpp source tree")
+#add_subdirectory(${SDCPP_DIR} ${CMAKE_BINARY_DIR}/sdcpp EXCLUDE_FROM_ALL)
+add_subdirectory(third_party/stable-diffusion.cpp)
 
 find_package(imgui CONFIG REQUIRED)
 find_package(glfw3 REQUIRED)
@@ -37,16 +48,30 @@ else()
     set(IMGUI_INCLUDE_DIR "${IMGUI_PATH_MATCH}")
 endif()
 
-add_executable(sd_app
-    #    ${SOURCE_DIR}/img_load.cpp
+add_executable(qwen-app
+    ${SOURCE_DIR}/gen/qwen_image_generator.cpp
     ${IMGUI_INCLUDE_DIR}/../res/bindings/imgui_impl_glfw.cpp
     ${IMGUI_INCLUDE_DIR}/../res/bindings/imgui_impl_opengl3.cpp
-    ${APP_DIR}/sd_demo.cpp)
-    
-target_include_directories(sd_app PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/${INCLUDE_DIR} ${IMGUI_INCLUDE_DIR}/../res)
+    ${APP_DIR}/qwen_app.cpp)
 
-target_link_libraries(sd_app PUBLIC stb::stb spdlog::spdlog)
-target_link_libraries(sd_app PRIVATE CLI11::CLI11 imgui::imgui glfw)
+target_include_directories(qwen-app PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/${INCLUDE_DIR}
+    ${IMGUI_INCLUDE_DIR}/../res
+    ${SDCPP_DIR}/include
+)
+
+target_link_libraries(qwen-app PUBLIC stb::stb spdlog::spdlog)
+target_link_libraries(qwen-app PRIVATE CLI11::CLI11 imgui::imgui glfw stable-diffusion)
+
+add_executable(qwen-cli
+    ${APP_DIR}/qwen_cli.cpp
+    ${SOURCE_DIR}/gen/qwen_image_generator.cpp
+)
+target_include_directories(qwen-cli PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/${INCLUDE_DIR}
+    ${SDCPP_DIR}/include
+)
+target_link_libraries(qwen-cli PRIVATE stable-diffusion stb::stb)
 
 find_package(GTest 1.16.0 CONFIG REQUIRED)
 add_executable(sd_app_test
