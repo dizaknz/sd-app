@@ -13,7 +13,7 @@ Uses
 
 This is a dev WIP that currently only supports [Qwen Image](./scripts/get_qwen_img.sh) for generation, no editing support.
 
->! NOTE
+> [!NOTE]
 > Parts co-authored with AI.
 
 # Manual Setup
